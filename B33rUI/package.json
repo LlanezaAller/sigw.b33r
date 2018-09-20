@@ -1,0 +1,19 @@
+{
+  "name": "b33r_ui",
+  "version": "1.0.0",
+  "description": "sigw.b33r",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LlanezaAller/sigw.b33r.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LlanezaAller/sigw.b33r/issues"
+  },
+  "homepage": "https://github.com/LlanezaAller/sigw.b33r#readme"
+}
