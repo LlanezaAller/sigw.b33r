@@ -20,3 +20,8 @@ function initMap() {
     });
     
 }
+
+
+$(document).ready(function(){
+    $('#slider').slider();
+});
