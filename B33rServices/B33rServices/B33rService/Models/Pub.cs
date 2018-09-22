@@ -8,6 +8,7 @@ namespace B33rServices.Model
     {
         public Pub()
         {
+            votes = new List<Vote>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

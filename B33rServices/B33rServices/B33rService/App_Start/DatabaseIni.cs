@@ -12,7 +12,13 @@ namespace B33rService
         {
             var pubs = new List<Pub>
             {
-                new Pub(){ },
+                new Pub()
+                {
+                    ID = Guid.NewGuid(),
+                    ImageURL = "",
+                    Location = new Location(){Latitud = 1.00, Longitud = 2.00},
+                    Name = "TestPub"
+                }
             };
 
             pubs.ForEach(s => context.Pubs.Add(s));

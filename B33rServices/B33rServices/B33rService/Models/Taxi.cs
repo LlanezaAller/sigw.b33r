@@ -8,8 +8,15 @@ namespace B33rServices.Model
         {
         }
 
+        private Guid id { get; set; }
         private string recordId { get; set; }
         private Fields fields { get; set; }
+
+        public Guid ID
+        {
+            get => id;
+            set => this.id = value;
+        }
 
         public string RecordID
         {

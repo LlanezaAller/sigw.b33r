@@ -8,7 +8,19 @@ namespace B33rServices.Model
         {
         }
 
-        public double Latitud { get; set; }
-        public double Longitud { get; set; }
+        private double latitud { get; set; }
+        private double longitud { get; set; }
+
+        public double Latitud
+        {
+            get => latitud;
+            set => this.latitud = value;
+        }
+
+        public double Longitud
+        {
+            get => longitud;
+            set => this.longitud = value;
+        }
     }
 }
