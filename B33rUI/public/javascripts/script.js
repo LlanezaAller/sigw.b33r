@@ -24,6 +24,42 @@ function initMap() {
 
 }
 
+//read points functions
+
+function readTaxiPoints(json) {
+    cleanTaxiMarkers();
+
+    var taxiObjects = JSON.parse(json);
+    for (let taxi in taxiObjects) {
+        var fields = taxi["fields"];
+        var latitud = fields["latitud"];
+        var longitud = fields["longitud"];
+        var parada = fields["parada"];
+        var location = new google.maps.LatLng(latitud, longitud);
+
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map
+        });
+
+        var infoView = '<div id="content">' +
+            '<div id="taxiInfo">' +
+            '</div>' +
+            '<h1 id="firstHeading" class="firstHeading">' + parada + '</h1>' +
+            '</div>';
+
+        var infowindow = new google.maps.InfoWindow({
+            content: infoView
+        });
+
+        marker.addListener('click', function() {
+            infowindow.open(map, marker);
+        });
+
+        this.taxiMarkers.push(marker);
+    }
+}
+
 function readPoints(json) {
     var jsonObj = JSON.parse(json);
     for (let i in json) {
@@ -50,6 +86,8 @@ function addMarker(location) {
         this.actualMarker.setMap(null);
     this.actualMarker = marker;
 }
+
+//// clean functions
 
 function cleanBarMarkers() {
     for (var i = 0; i < this.barMarkers.length; i++) {
