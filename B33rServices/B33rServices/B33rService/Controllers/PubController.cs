@@ -6,16 +6,19 @@ using System.Linq;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Mvc;
 using B33rService.App_Start.Helper;
 using B33rService.Models;
 using B33rServices.Model;
+using Newtonsoft.Json;
 
 namespace B33rService.Controllers
 {
     public class PubController : ApiController
     {
         // GET api/location
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public List<Pub> Get()
         {
             using (DatabaseContext db = new DatabaseContext())
@@ -30,6 +33,7 @@ namespace B33rService.Controllers
         }
 
         // Post api/Pub/id
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public void Post(Guid id, [FromBody]Vote vote)
         {
             using (DatabaseContext db = new DatabaseContext())
