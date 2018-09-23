@@ -2,6 +2,7 @@ var map;
 var actualMarker;
 var barMarkers = [];
 var taxiMarkers = [];
+var auxLatLng = 200;
 
 var WMS_URL = 'http://ide.gijon.es/geoserver/gwc/service/wms?';
 var WMS_Layers = 'Gijon%3ALU_Zona_Verde';
@@ -9,15 +10,18 @@ var TileWMS = function(coord, zoom) {
     var x = document.getElementById("wms_texto");
     var proj = map.getProjection();
     var zfactor = Math.pow(2, zoom);
-    var top = proj.fromPointToLatLng(new google.maps.Point(coord.x * 450000 / zfactor, coord.y * 450000 / zfactor));
-    var bot = proj.fromPointToLatLng(new google.maps.Point((coord.x + 1) * 450000 / zfactor, (coord.y + 1) * 450000 / zfactor));
-    var bbox = top.lng() + "," + bot.lat() + "," + bot.lng() + "," + top.lat();
+    var top = proj.fromPointToLatLng(new google.maps.Point(coord.x * auxLatLng / zfactor, coord.y * auxLatLng / zfactor));
+    var bot = proj.fromPointToLatLng(new google.maps.Point((coord.x + 1) * auxLatLng / zfactor, (coord.y + 1) * auxLatLng / zfactor));
+
+    var botUtm = fromLatLon(bot.lat(), bot.lng());
+    var topUtm = fromLatLon(top.lat(), top.lng());
+
+    var bbox = topUtm.easting + "," + botUtm.northing + "," + botUtm.easting + "," + topUtm.northing;
 
     var myURL = WMS_URL + "TRANSPARENT=true&SRS=EPSG%3A25830&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&EXCEPTIONS=application%2Fvnd.ogc.se_inimage&FORMAT=image%2Fpng&WIDTH=200&HEIGHT=200";
     myURL += "&LAYERS=" + WMS_Layers;
     myURL += "&BBOX=" + bbox;
     x.innerHTML = myURL;
-    console.log(myURL);
     return myURL;
 }
 
@@ -89,44 +93,44 @@ function readTaxiPoints(json) {
 }
 
 function readPointsBares(json) {
-    var jsonObj=json;
+    var jsonObj = json;
     $.each(jsonObj.bares, function(i, bar) {
-        var lat=bar.location.latitude;
-        var lon=bar.location.longitude;
-        addMarkerBar(new google.maps.LatLng(lat,lon),bar.name,bar.imageUrl,bar.guid);
+        var lat = bar.location.latitude;
+        var lon = bar.location.longitude;
+        addMarkerBar(new google.maps.LatLng(lat, lon), bar.name, bar.imageUrl, bar.guid);
     });
 }
 
-function addMarkerBar(location,name,image,guid) {
+function addMarkerBar(location, name, image, guid) {
     var marker = new google.maps.Marker({
         position: location,
         map: map
     });
     var infoView = '<div id="content">' +
-    '<div id="barInfo">' +
-    '<img src="'+image+'" />'+
-    '<h1 id="firstHeading" class="firstHeading">' + name + '</h1>' +
-    '<form>'+
-    '<span id="actualguid" hidden>'+guid+'</span>'+
-    '<fieldset class="starability-basic"> '+
-    '<legend>Vota tu experiencia en este bar:</legend>'+
-  
-      '<input type="radio" id="rate5" name="rating" value="5" />'+
-      '<label for="rate5" title="Amazing" id="five-points">5</label>'+
-      '<input type="radio" id="rate4" name="rating" value="4" />'+
-      '<label for="rate4" title="Very good" id="four-points">4</label>'+
-      '<input type="radio" id="rate3" name="rating" value="3" />'+
-      '<label for="rate3" title="Average" id="three-points">3</label>'+
-      '<input type="radio" id="rate2" name="rating" value="2" />'+
-      '<label for="rate2" title="Not good" id="two-points">2</label>'+
-      '<input type="radio" id="rate1" name="rating" value="1" />'+
-      '<label for="rate1" title="Terrible" id="one-points">1</label>'+
-    '</fieldset>'+
-    '<textarea id="mensajeValoracion"></textarea>'+
-    '</form>'+
-    '<button class="btn-votes" onclick="enviarValoracion()">Enviar valoración</button>'+
-    '</div>' +
-    '</div>';
+        '<div id="barInfo">' +
+        '<img src="' + image + '" />' +
+        '<h1 id="firstHeading" class="firstHeading">' + name + '</h1>' +
+        '<form>' +
+        '<span id="actualguid" hidden>' + guid + '</span>' +
+        '<fieldset class="starability-basic"> ' +
+        '<legend>Vota tu experiencia en este bar:</legend>' +
+
+        '<input type="radio" id="rate5" name="rating" value="5" />' +
+        '<label for="rate5" title="Amazing" id="five-points">5</label>' +
+        '<input type="radio" id="rate4" name="rating" value="4" />' +
+        '<label for="rate4" title="Very good" id="four-points">4</label>' +
+        '<input type="radio" id="rate3" name="rating" value="3" />' +
+        '<label for="rate3" title="Average" id="three-points">3</label>' +
+        '<input type="radio" id="rate2" name="rating" value="2" />' +
+        '<label for="rate2" title="Not good" id="two-points">2</label>' +
+        '<input type="radio" id="rate1" name="rating" value="1" />' +
+        '<label for="rate1" title="Terrible" id="one-points">1</label>' +
+        '</fieldset>' +
+        '<textarea id="mensajeValoracion"></textarea>' +
+        '</form>' +
+        '<button class="btn-votes" onclick="enviarValoracion()">Enviar valoración</button>' +
+        '</div>' +
+        '</div>';
 
     var infowindow = new google.maps.InfoWindow({
         content: infoView
@@ -134,7 +138,7 @@ function addMarkerBar(location,name,image,guid) {
 
     marker.addListener('click', function() {
         infowindow.open(map, marker);
-        
+
         document.getElementById("five-points").addEventListener("click", function() {
             $("#five-points").addClass("selectedValoracion");
         }, false);
@@ -154,30 +158,30 @@ function addMarkerBar(location,name,image,guid) {
     barMarkers.push(marker);
 }
 
-function enviarValoracion(){
-    var mensaje=$("#mensajeValoracion").val();  
-    var voto=parseInt($(".selectedValoracion").text());
-    var guid= $("#actualguid").text();
+function enviarValoracion() {
+    var mensaje = $("#mensajeValoracion").val();
+    var voto = parseInt($(".selectedValoracion").text());
+    var guid = $("#actualguid").text();
     item = {}
-    item ["Msg"] = mensaje;
-    item ["Value"] = voto;
+    item["Msg"] = mensaje;
+    item["Value"] = voto;
     jsonString = JSON.stringify(item);
 
     $.ajax({
-        url : '/api/pub/'+guid,
-        data : jsonString,
-        type : 'POST',
-        dataType : 'json',
-        success : function(json) {
+        url: '/api/pub/' + guid,
+        data: jsonString,
+        type: 'POST',
+        dataType: 'json',
+        success: function(json) {
             alert("votado")
         },
-        error : function(xhr, status) {
+        error: function(xhr, status) {
             alert('Disculpe, existió un problema');
         },
-        complete : function(xhr, status) {
+        complete: function(xhr, status) {
             alert('Votado');
         }
-    });  
+    });
 }
 
 //// clean functions
@@ -204,29 +208,29 @@ function cleanMap() {
 
 ////PETICIONES
 
-function getTaxiPoints(){
+function getTaxiPoints() {
     $.ajax({
-        url : '/api/taxi/',
-        type : 'GET',
-        dataType : 'json',
-        success : function(json) {
+        url: '/api/taxi/',
+        type: 'GET',
+        dataType: 'json',
+        success: function(json) {
             readTaxiPoints(json);
         },
-        error : function(xhr, status) {
+        error: function(xhr, status) {
             alert('Error al obtener los taxis de la zona');
         }
     });
 }
 
-function getPointsBares(){
+function getPointsBares() {
     $.ajax({
-        url : '/api/pub/',
-        type : 'GET',
-        dataType : 'json',
-        success : function(json) {
+        url: '/api/pub/',
+        type: 'GET',
+        dataType: 'json',
+        success: function(json) {
             readPointsBares(json);
         },
-        error : function(xhr, status) {
+        error: function(xhr, status) {
             alert('Error al obtener los bares de la zona');
         }
     });
@@ -242,29 +246,32 @@ $(document).ready(function() {
 
 
 
-var points={"bares":[{
-	"guid":"1",
-	"name":"La casa del cafe",
-	"location":{
-		"latitude":43.5392814,
-		"longitude":-5.6675749
-	},
-	"imageUrl":"https://lh5.googleusercontent.com/p/AF1QipNqnuN4cLpu_eSgTP-vQCm_eWkBcAu2oMreNV6y=w408-h272-k-no",
-	"votes":[{
-		"value":4,
-		"msg":"Mensaje"
-	}]
-},
-{
-	"guid":"2",
-	"name":"Blu café",
-	"location":{
-		"latitude":43.5415915,
-		"longitude":-5.6688648
-	},
-	"imageUrl":"https://lh5.googleusercontent.com/p/AF1QipMNRDDHds7EICM7jx5gcSVoON5QbLr2QMMmguhb=w408-h272-k-no",
-	"votes":[{
-		"value":4,
-		"msg":"Mensaje"
-	}]
-}]}
+var points = {
+    "bares": [{
+            "guid": "1",
+            "name": "La casa del cafe",
+            "location": {
+                "latitude": 43.5392814,
+                "longitude": -5.6675749
+            },
+            "imageUrl": "https://lh5.googleusercontent.com/p/AF1QipNqnuN4cLpu_eSgTP-vQCm_eWkBcAu2oMreNV6y=w408-h272-k-no",
+            "votes": [{
+                "value": 4,
+                "msg": "Mensaje"
+            }]
+        },
+        {
+            "guid": "2",
+            "name": "Blu café",
+            "location": {
+                "latitude": 43.5415915,
+                "longitude": -5.6688648
+            },
+            "imageUrl": "https://lh5.googleusercontent.com/p/AF1QipMNRDDHds7EICM7jx5gcSVoON5QbLr2QMMmguhb=w408-h272-k-no",
+            "votes": [{
+                "value": 4,
+                "msg": "Mensaje"
+            }]
+        }
+    ]
+}
