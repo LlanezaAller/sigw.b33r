@@ -71,6 +71,7 @@ body {
   border-radius: 5px; }
 
 #barInfo img {
-  border-radius: 5px; }
+  border-radius: 5px;
+  max-height: 250px; }
 
 /*# sourceMappingURL=style.css.map */

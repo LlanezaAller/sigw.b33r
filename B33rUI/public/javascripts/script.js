@@ -21,7 +21,6 @@ var TileWMS = function(coord, zoom) {
     var myURL = WMS_URL + "TRANSPARENT=true&SRS=EPSG%3A25830&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&EXCEPTIONS=application%2Fvnd.ogc.se_inimage&FORMAT=image%2Fpng&WIDTH=200&HEIGHT=200";
     myURL += "&LAYERS=" + WMS_Layers;
     myURL += "&BBOX=" + bbox;
-    x.innerHTML = myURL;
     return myURL;
 }
 
@@ -69,18 +68,18 @@ var imageTaxi;
 
 //read points functions
 
-function readTaxiPoints() {//add parameter taxis in production
+function readTaxiPoints(json) {//add parameter taxis in production
 
     cleanMap();
-    var jsonParse = JSON.parse(jsonTaxis);
+    var jsonParse = JSON.parse(json);
     //var jsonParse=jsonTaxis;
-    var taxiObjects = jsonParse["taxis"];
-    for (let index in taxiObjects) {
-        var taxi = taxiObjects[index];
-        var fields = taxi["fields"];
-        var latitud = fields["latitud"];
-        var longitud = fields["longitud"];
-        var parada = fields["parada"];
+   // var taxiObjects = jsonParse["taxis"];
+    for (let index in jsonParse) {
+        var taxi = jsonParse[index];
+        var fields = taxi["TaxiLocation"];
+        var latitud = fields["Latitud"];
+        var longitud = fields["Longitud"];
+        var parada = fields["Parada"];
         var location = new google.maps.LatLng(latitud, longitud);
         addMarkerTaxi(location,parada) 
     }
@@ -115,32 +114,32 @@ function readPointsBares(json) {
     var baresOrdenados=[];
     var mediaTotal=0;
     var cont=0;
-    $.each(jsonObj.bares, function(i, bar) {
+    $.each(jsonObj, function(i, bar) {
         var media=0;
-        $.each(bar.votes, function(i, voto) {
-            voto.value = voto.value *2;
-            media=media+voto.value;
+        $.each(bar.Votes, function(i, voto) {
+            voto.value = voto.Value *2;
+            media=media+voto.Value;
         });
-        media=media/bar.votes.length;
+        media=media/bar.Votes.length;
         mediaTotal=mediaTotal+media;
         baresOrdenados.push(bar);
         cont=cont+1;
     });
     mediaTotal=mediaTotal/cont;
     $.each(baresOrdenados, function(i, bar) {
-        var lat=bar.location.latitude;
-        var lon=bar.location.longitude;
+        var lat=bar.Location.Latitud;
+        var lon=bar.Location.Longitud;
         var media=0;
-        $.each(bar.votes, function(i, voto) {
-            media=media+voto.value;
+        $.each(bar.Votes, function(i, voto) {
+            media=media+voto.Value;
         });
-        media=media/bar.votes.length;
+        media=media/bar.Votes.length;
         if(media < mediaTotal && valueSlider > 1)
-            addMarkerBar(new google.maps.LatLng(lat,lon),bar.name,bar.imageUrl,bar.guid);
+            addMarkerBar(new google.maps.LatLng(lat,lon),bar.Name,bar.ImageURL,bar.ID);
         else if(media > mediaTotal && valueSlider < 1)
-            addMarkerBar(new google.maps.LatLng(lat,lon),bar.name,bar.imageUrl,bar.guid);
+            addMarkerBar(new google.maps.LatLng(lat,lon),bar.Name,bar.ImageURL,bar.ID);
         else if(valueSlider === 1)
-            addMarkerBar(new google.maps.LatLng(lat,lon),bar.name,bar.imageUrl,bar.guid);
+            addMarkerBar(new google.maps.LatLng(lat,lon),bar.Name,bar.ImageURL,bar.ID);
     });
 }
 
@@ -206,6 +205,7 @@ function enviarValoracion() {
     var voto = parseInt($(".selectedValoracion").text());
     var guid = $("#actualguid").text();
     item = {}
+    item["Id"] = guid;
     item["Msg"] = mensaje;
     item["Value"] = voto;
     jsonString = JSON.stringify(item);
@@ -255,7 +255,7 @@ function getTaxiPoints() {
     $.ajax({
         url: 'http://156.35.98.50:50050/api/Taxi',
         type: 'GET',
-        dataType: 'application/json',
+        dataType: 'text',
         success: function(json) {
             readTaxiPoints(json);
         },
@@ -269,7 +269,7 @@ function getPointsBares() {
     $.ajax({
         url: 'http://156.35.98.50:50050/api/Pub',
         type: 'GET',
-        dataType: 'application/json',        
+        dataType: 'text',
         success: function(json) {
             readPointsBares(json);
         },
