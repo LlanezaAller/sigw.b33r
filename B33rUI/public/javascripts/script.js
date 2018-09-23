@@ -53,13 +53,27 @@ function initMap() {
     var overlayWMS = new google.maps.ImageMapType(overlayOptions);
     map.overlayMapTypes.push(overlayWMS);
 
+    imageTaxi = {
+        url: '../images/icon-taxi-element.png',
+        // This marker is 20 pixels wide by 32 pixels high.
+        size: new google.maps.Size(32, 32),
+        // The origin for this image is (0, 0).
+        origin: new google.maps.Point(0, 0),
+        // The anchor for this image is the base of the flagpole at (0, 32).
+        anchor: new google.maps.Point(0, 32)
+      };
+
 }
+var imageTaxi;
+
 
 //read points functions
 
-function readTaxiPoints(json) {
-    cleanTaxiMarkers();
-    var jsonParse = JSON.parse(json);
+function readTaxiPoints() {//add parameter taxis in production
+
+    cleanMap();
+    //var jsonParse = JSON.parse(jsonTaxis);
+    var jsonParse=jsonTaxis;
     var taxiObjects = jsonParse["taxis"];
     for (let index in taxiObjects) {
         var taxi = taxiObjects[index];
@@ -68,36 +82,65 @@ function readTaxiPoints(json) {
         var longitud = fields["longitud"];
         var parada = fields["parada"];
         var location = new google.maps.LatLng(latitud, longitud);
-
-        var marker = new google.maps.Marker({
-            position: location,
-            map: map
-        });
-
-        var infoView = '<div id="content">' +
-            '<div id="taxiInfo">' +
-            '</div>' +
-            '<h1 id="firstHeading" class="firstHeading">' + parada + '</h1>' +
-            '</div>';
-
-        var infowindow = new google.maps.InfoWindow({
-            content: infoView
-        });
-
-        marker.addListener('click', function() {
-            infowindow.open(map, marker);
-        });
-
-        this.taxiMarkers.push(marker);
+        addMarkerTaxi(location,parada) 
     }
+}
+function addMarkerTaxi(location,parada){
+    var marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        icon:imageTaxi
+    });
+
+    var infoView = '<div id="content">' +
+        '<div id="taxiInfo">' +
+        '<h1 id="firstHeading" class="firstHeading">' + parada + '</h1>' +
+        '</div>' +
+        '</div>';
+
+    var infowindow = new google.maps.InfoWindow({
+        content: infoView
+    });
+
+    marker.addListener('click', function() {
+        infowindow.open(map, marker);
+    });
+
+    this.taxiMarkers.push(marker);
 }
 
 function readPointsBares(json) {
-    var jsonObj = json;
+    cleanBarMarkers();
+    var jsonObj=json;
+    var baresOrdenados=[];
+    var mediaTotal=0;
+    var cont=0;
     $.each(jsonObj.bares, function(i, bar) {
-        var lat = bar.location.latitude;
-        var lon = bar.location.longitude;
-        addMarkerBar(new google.maps.LatLng(lat, lon), bar.name, bar.imageUrl, bar.guid);
+        var media=0;
+        $.each(bar.votes, function(i, voto) {
+            voto.value = voto.value *2;
+            media=media+voto.value;
+        });
+        media=media/bar.votes.length;
+        mediaTotal=mediaTotal+media;
+        baresOrdenados.push(bar);
+        cont=cont+1;
+    });
+    mediaTotal=mediaTotal/cont;
+    $.each(baresOrdenados, function(i, bar) {
+        var lat=bar.location.latitude;
+        var lon=bar.location.longitude;
+        var media=0;
+        $.each(bar.votes, function(i, voto) {
+            media=media+voto.value;
+        });
+        media=media/bar.votes.length;
+        if(media < mediaTotal && valueSlider > 1)
+            addMarkerBar(new google.maps.LatLng(lat,lon),bar.name,bar.imageUrl,bar.guid);
+        else if(media > mediaTotal && valueSlider < 1)
+            addMarkerBar(new google.maps.LatLng(lat,lon),bar.name,bar.imageUrl,bar.guid);
+        else if(valueSlider === 1)
+            addMarkerBar(new google.maps.LatLng(lat,lon),bar.name,bar.imageUrl,bar.guid);
     });
 }
 
@@ -235,43 +278,70 @@ function getPointsBares() {
         }
     });
 }
-
+var slider;
 $(document).ready(function() {
     $('#slider').slider();
+    $('#slider').slider().on('change', function(event) {
+        valueSlider = $('#slider').slider('getValue');
+        readPointsBares(points);
+        
+    });
     readPointsBares(points);
 
     //getPointsBares();
     //$("#taxi").onclick(getTaxiPoints());
 });
 
+var valueSlider=1;
 
 
-var points = {
-    "bares": [{
-            "guid": "1",
-            "name": "La casa del cafe",
-            "location": {
-                "latitude": 43.5392814,
-                "longitude": -5.6675749
-            },
-            "imageUrl": "https://lh5.googleusercontent.com/p/AF1QipNqnuN4cLpu_eSgTP-vQCm_eWkBcAu2oMreNV6y=w408-h272-k-no",
-            "votes": [{
-                "value": 4,
-                "msg": "Mensaje"
-            }]
+
+
+
+var points={
+    "bares":[{
+        "guid":"1",
+        "name":"La casa del cafe",
+        "location":{
+            "latitude":43.5392814,
+            "longitude":-5.6675749
         },
-        {
-            "guid": "2",
-            "name": "Blu café",
-            "location": {
-                "latitude": 43.5415915,
-                "longitude": -5.6688648
-            },
-            "imageUrl": "https://lh5.googleusercontent.com/p/AF1QipMNRDDHds7EICM7jx5gcSVoON5QbLr2QMMmguhb=w408-h272-k-no",
-            "votes": [{
-                "value": 4,
-                "msg": "Mensaje"
-            }]
-        }
-    ]
+        "imageUrl":"https://lh5.googleusercontent.com/p/AF1QipNqnuN4cLpu_eSgTP-vQCm_eWkBcAu2oMreNV6y=w408-h272-k-no",
+        "votes":[{
+            "value":2,
+            "msg":"Mensaje"
+        }]
+    },
+    {
+        "guid":"2",
+        "name":"Blu café",
+        "location":{
+            "latitude":43.5415915,
+            "longitude":-5.6688648
+        },
+        "imageUrl":"https://lh5.googleusercontent.com/p/AF1QipMNRDDHds7EICM7jx5gcSVoON5QbLr2QMMmguhb=w408-h272-k-no",
+        "votes":[{
+            "value":4,
+            "msg":"Mensaje"
+        }]
+    }]
 }
+
+var jsonTaxis={
+    "taxis": [
+      {
+        "fields": {
+          "latitud": "43.538531",
+          "longitud": "-5.666525",
+          "parada": "parada"
+        }
+      },
+      {
+        "fields": {
+          "latitud": "43.539725",
+          "longitud": "-5.657314",
+          "parada": "parada"
+        }
+      }
+    ]
+  }
