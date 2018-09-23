@@ -49,13 +49,27 @@ function initMap() {
     var overlayWMS = new google.maps.ImageMapType(overlayOptions);
     map.overlayMapTypes.push(overlayWMS);
 
+    imageTaxi = {
+        url: '../images/icon-taxi-element.png',
+        // This marker is 20 pixels wide by 32 pixels high.
+        size: new google.maps.Size(32, 32),
+        // The origin for this image is (0, 0).
+        origin: new google.maps.Point(0, 0),
+        // The anchor for this image is the base of the flagpole at (0, 32).
+        anchor: new google.maps.Point(0, 32)
+      };
+
 }
+var imageTaxi;
+
 
 //read points functions
 
-function readTaxiPoints(json) {
+function readTaxiPoints() {//add parameter taxis in production
+
     cleanTaxiMarkers();
-    var jsonParse = JSON.parse(json);
+    //var jsonParse = JSON.parse(jsonTaxis);
+    var jsonParse=jsonTaxis;
     var taxiObjects = jsonParse["taxis"];
     for (let index in taxiObjects) {
         var taxi = taxiObjects[index];
@@ -65,9 +79,11 @@ function readTaxiPoints(json) {
         var parada = fields["parada"];
         var location = new google.maps.LatLng(latitud, longitud);
 
+        
         var marker = new google.maps.Marker({
             position: location,
-            map: map
+            map: map,
+            icon:imageTaxi
         });
 
         var infoView = '<div id="content">' +
@@ -305,3 +321,22 @@ var points={
         }]
     }]
 }
+
+var jsonTaxis={
+    "taxis": [
+      {
+        "fields": {
+          "latitud": "43.538531",
+          "longitud": "-5.666525",
+          "parada": "parada"
+        }
+      },
+      {
+        "fields": {
+          "latitud": "43.539725",
+          "longitud": "-5.657314",
+          "parada": "parada"
+        }
+      }
+    ]
+  }
