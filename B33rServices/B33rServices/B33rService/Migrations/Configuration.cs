@@ -17,22 +17,12 @@ namespace B33rService.Migrations
 
         protected override void Seed(B33rService.DatabaseContext context)
         {
-            var pubs = new List<Pub>
-            {
-                new Pub()
-                {
-                    ID = Guid.NewGuid(),
-                    ImageURL = "",
-                    Location = new Location(){Latitud = 1.00, Longitud = 2.00},
-                    Name = "TestPub",
-                    Votes = new List<Vote>(){ new Vote(){Id = Guid.NewGuid(), Msg = "testMSG", Value = 4}}
-                }
-            };
+            DatabaseIni dbi = new DatabaseIni();
+            var pubs = dbi.GetInitialPubDataset();
 
             pubs.ForEach(s => context.Pubs.Add(s));
             context.SaveChanges();
 
-            DatabaseIni dbi = new DatabaseIni();
             var taxis = dbi.InitializeTaxiDb();
 
             taxis.ForEach(s => context.Taxis.Add(s));

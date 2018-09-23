@@ -14,17 +14,7 @@ namespace B33rService
 
         protected override void Seed(DatabaseContext context)
         {
-            var pubs = new List<Pub>
-            {
-                new Pub()
-                {
-                    ID = Guid.NewGuid(),
-                    ImageURL = "",
-                    Location = new Location(){Latitud = 1.00, Longitud = 2.00},
-                    Name = "TestPub",
-                    Votes = new List<Vote>(){ new Vote(){Id = Guid.NewGuid(), Msg = "testMSG", Value = 4}}
-                }
-            };
+            var pubs = GetInitialPubDataset();
 
             pubs.ForEach(s => context.Pubs.Add(s));
             context.SaveChanges();
@@ -46,6 +36,47 @@ namespace B33rService
                 TaxiLocation = new TaxiLocation() { Latitud = x.fields.latitud, Longitud = x.fields.longitud, Parada = x.fields.parada },
                 RecordID = x.recordid
             }).ToList();
+
+            return result;
+        }
+
+        public List<Pub> GetInitialPubDataset()
+        {
+            List<Pub> result = new List<Pub>
+            {
+                new Pub()
+                {
+                    ID = Guid.NewGuid(),
+                    ImageURL = "https://media-cdn.tripadvisor.com/media/photo-s/03/8f/12/65/vinateria-arde-lucus.jpg",
+                    Location = new Location(){Latitud = 43.539980, Longitud = -5.656210},
+                    Name = "Arde Lvcvs",
+                    Votes = new List<Vote>(){ new Vote(){Id = Guid.NewGuid(), Msg = "Buena variedad de cervezas y pinchos", Value = 4}}
+                },
+                new Pub()
+                {
+                    ID = Guid.NewGuid(),
+                    ImageURL = "http://4.bp.blogspot.com/-Wmtc7DITpEQ/UaJidnpG8RI/AAAAAAAAABI/Tgc5t40m0CE/s1600/Alt+Strasse+puerta.jpg",
+                    Location = new Location(){Latitud = 43.544475, Longitud = -5.662819},
+                    Name = "Alt Strasse",
+                    Votes = new List<Vote>(){ new Vote(){Id = Guid.NewGuid(), Msg = "Buena variedad de cervezas de barril y unas hamburguesas muy buenas", Value = 5}}
+                },
+                new Pub()
+                {
+                    ID = Guid.NewGuid(),
+                    ImageURL = "https://birrapedia.com/img/modulos/empresas/ebd/cerveceria-vincer_14670422331801_g.jpg",
+                    Location = new Location(){Latitud = 43.538906, Longitud = -5.653306},
+                    Name = "Vincert",
+                    Votes = new List<Vote>(){ new Vote(){Id = Guid.NewGuid(), Msg = "Cervezas y música, qué mas se puede pedir!", Value = 4}}
+                },
+                new Pub()
+                {
+                    ID = Guid.NewGuid(),
+                    ImageURL = "https://nosolocachopos.files.wordpress.com/2018/03/img-20180307-wa0004.jpg?w=1400",
+                    Location = new Location(){Latitud = 43.541226, Longitud = -5.660072},
+                    Name = "Honky Tonk",
+                    Votes = new List<Vote>(){ new Vote(){Id = Guid.NewGuid(), Msg = "Música y cerveza, la mejor manera de pasar la tarde", Value = 4}}
+                }
+            };
 
             return result;
         }
