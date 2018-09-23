@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <script
-    src="https://code.jquery.com/jquery-3.3.1.min.js"
-    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous"></script>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.2.0/css/bootstrap-slider.css" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.2.0/bootstrap-slider.min.js"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <script src="/javascripts/script.js"></script>
-  </head>
-  <body>
+</head>
+
+<body>
     <div class="icon-taxi">
-      <img src="/images/icon-taxi.png"/>
+        <img src="/images/icon-taxi.png" />
     </div>
     <div id="map"></div>
-    <div class="slider-value-left con-xs-2"><img src="/images/icon-beer.png"/></div>
-    <input id="slider" class="col-xs-8" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/>
-    <div class="slider-value-right col-xs-2"><img src="/images/icon-distance.png"/></div>    
-  </body>
+    <div id="wms_texto"></div>
+    <div class="slider-value-left con-xs-2"><img src="/images/icon-beer.png" /></div>
+    <input id="slider" class="col-xs-8" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14" />
+    <div class="slider-value-right col-xs-2"><img src="/images/icon-distance.png" /></div>
+</body>
+
 </html>

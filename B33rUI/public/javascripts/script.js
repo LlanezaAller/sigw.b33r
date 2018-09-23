@@ -3,24 +3,51 @@ var actualMarker;
 var barMarkers = [];
 var taxiMarkers = [];
 
+var WMS_URL = 'http://ide.gijon.es/geoserver/gwc/service/wms?';
+var WMS_Layers = 'Gijon%3ALU_Zona_Verde';
+var TileWMS = function(coord, zoom) {
+    var x = document.getElementById("wms_texto");
+    var proj = map.getProjection();
+    var zfactor = Math.pow(2, zoom);
+    var top = proj.fromPointToLatLng(new google.maps.Point(coord.x * 450000 / zfactor, coord.y * 450000 / zfactor));
+    var bot = proj.fromPointToLatLng(new google.maps.Point((coord.x + 1) * 450000 / zfactor, (coord.y + 1) * 450000 / zfactor));
+    var bbox = top.lng() + "," + bot.lat() + "," + bot.lng() + "," + top.lat();
+
+    var myURL = WMS_URL + "TRANSPARENT=true&SRS=EPSG%3A25830&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&EXCEPTIONS=application%2Fvnd.ogc.se_inimage&FORMAT=image%2Fpng&WIDTH=200&HEIGHT=200";
+    myURL += "&LAYERS=" + WMS_Layers;
+    myURL += "&BBOX=" + bbox;
+    x.innerHTML = myURL;
+    console.log(myURL);
+    return myURL;
+}
+
+
 function initMap() {
-    var oviedo_eii = new google.maps.LatLng(43.354810, -5.851805);
+    var centro = new google.maps.LatLng(43.528047, -5.668113);
     var misOpciones = {
-        center: oviedo_eii,
-        zoom: 18,
+        center: centro,
+        zoom: 14,
         mapTypeId: 'satellite',
         tilt: 45,
         heading: 90,
         streetViewControl: false,
         mapTypeControl: false,
         rotateControl: true,
-        fullscreenControl: false
+        fullscreenControl: false,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 
     map = new google.maps.Map(document.getElementById("map"), misOpciones);
     map.addListener('click', function(event) {
         addMarker(event.latLng);
     });
+
+    var overlayOptions = {
+        getTileUrl: TileWMS,
+        tileSize: new google.maps.Size(200, 200)
+    };
+    var overlayWMS = new google.maps.ImageMapType(overlayOptions);
+    map.overlayMapTypes.push(overlayWMS);
 
 }
 
