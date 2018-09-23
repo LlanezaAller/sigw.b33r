@@ -110,7 +110,7 @@ function addMarkerTaxi(location,parada){
 }
 
 function readPointsBares(json) {
-    cleanBarMarkers();
+    cleanMap();
     var jsonObj=json;
     var baresOrdenados=[];
     var mediaTotal=0;
