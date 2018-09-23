@@ -29,7 +29,7 @@ namespace B33rService.Controllers
             }
         }
 
-        // Post api/values/5
+        // Post api/Pub/id
         public void Post(Guid id, [FromBody]Vote vote)
         {
             using (DatabaseContext db = new DatabaseContext())
