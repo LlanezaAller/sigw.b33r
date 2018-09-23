@@ -28,9 +28,10 @@ function initMap() {
 
 function readTaxiPoints(json) {
     cleanTaxiMarkers();
-
-    var taxiObjects = JSON.parse(json);
-    for (let taxi in taxiObjects) {
+    var jsonParse = JSON.parse(json);
+    var taxiObjects = jsonParse["taxis"];
+    for (let index in taxiObjects) {
+        var taxi = taxiObjects[index];
         var fields = taxi["fields"];
         var latitud = fields["latitud"];
         var longitud = fields["longitud"];
