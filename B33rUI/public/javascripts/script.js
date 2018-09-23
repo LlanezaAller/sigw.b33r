@@ -21,6 +21,33 @@ function initMap() {
     
 }
 
+function readPoints(json){
+    var jsonObj=JSON.parse(json);
+    for (let i in json) {
+        var lat=0;
+        var lon=0;
+        for (let j in json[i]) {
+          if (json[i][j].hasOwnProperty('latitude')) {
+            lat=json[i][j];
+          }else if (json[i][j].hasOwnProperty('longitude')) {
+            lon=json[i][j];
+          }
+          if (lat!=0 && lon!=0)
+            addMarker(new google.maps.LatLng(lat,lon));
+        }
+      }
+}
+
+function addMarker(location) {
+    var marker = new google.maps.Marker({
+        position: location,
+        map: map
+    });
+    if(actualMarker !== undefined)
+        actualMarker.setMap(null);
+    actualMarker=marker;
+}
+
 
 $(document).ready(function(){
     $('#slider').slider();
