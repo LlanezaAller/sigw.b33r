@@ -88,7 +88,7 @@ function readTaxiPoints(json) {
     }
 }
 
-function readPoints(json) {
+function readPointsBares(json) {
     var jsonObj=json;
     $.each(jsonObj.bares, function(i, bar) {
         var lat=bar.location.latitude;
@@ -104,7 +104,6 @@ function addMarkerBar(location,name,image,guid) {
     });
     var infoView = '<div id="content">' +
     '<div id="barInfo">' +
-    '</div>' +
     '<img src="'+image+'" />'+
     '<h1 id="firstHeading" class="firstHeading">' + name + '</h1>' +
     '<form>'+
@@ -125,7 +124,8 @@ function addMarkerBar(location,name,image,guid) {
     '</fieldset>'+
     '<textarea id="mensajeValoracion"></textarea>'+
     '</form>'+
-    '<button onclick="enviarValoracion()">Enviar valoración</button>'+
+    '<button class="btn-votes" onclick="enviarValoracion()">Enviar valoración</button>'+
+    '</div>' +
     '</div>';
 
     var infowindow = new google.maps.InfoWindow({
@@ -201,9 +201,43 @@ function cleanMap() {
     cleanTaxiMarkers();
 }
 
+
+////PETICIONES
+
+function getTaxiPoints(){
+    $.ajax({
+        url : '/api/taxi/',
+        type : 'GET',
+        dataType : 'json',
+        success : function(json) {
+            readTaxiPoints(json);
+        },
+        error : function(xhr, status) {
+            alert('Error al obtener los taxis de la zona');
+        }
+    });
+}
+
+function getPointsBares(){
+    $.ajax({
+        url : '/api/pub/',
+        type : 'GET',
+        dataType : 'json',
+        success : function(json) {
+            readPointsBares(json);
+        },
+        error : function(xhr, status) {
+            alert('Error al obtener los bares de la zona');
+        }
+    });
+}
+
 $(document).ready(function() {
     $('#slider').slider();
-    readPoints(points);
+    readPointsBares(points);
+
+    //getPointsBares();
+    //$("#taxi").onclick(getTaxiPoints());
 });
 
 

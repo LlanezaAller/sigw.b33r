@@ -54,4 +54,23 @@ body {
     max-width: 90px;
     cursor: pointer; }
 
+#mensajeValoracion {
+  width: 98%;
+  margin-bottom: 15px;
+  margin-top: 17px;
+  border-radius: 5px; }
+
+.starability-basic legend {
+  padding-bottom: 15px;
+  width: 200px; }
+
+.btn-votes {
+  background-color: #e5e5e5;
+  border: none;
+  padding: 15px;
+  border-radius: 5px; }
+
+#barInfo img {
+  border-radius: 5px; }
+
 /*# sourceMappingURL=style.css.map */
