@@ -67,7 +67,7 @@ var imageTaxi;
 
 function readTaxiPoints() {//add parameter taxis in production
 
-    cleanTaxiMarkers();
+    cleanMap();
     //var jsonParse = JSON.parse(jsonTaxis);
     var jsonParse=jsonTaxis;
     var taxiObjects = jsonParse["taxis"];
@@ -78,30 +78,31 @@ function readTaxiPoints() {//add parameter taxis in production
         var longitud = fields["longitud"];
         var parada = fields["parada"];
         var location = new google.maps.LatLng(latitud, longitud);
-
-        
-        var marker = new google.maps.Marker({
-            position: location,
-            map: map,
-            icon:imageTaxi
-        });
-
-        var infoView = '<div id="content">' +
-            '<div id="taxiInfo">' +
-            '</div>' +
-            '<h1 id="firstHeading" class="firstHeading">' + parada + '</h1>' +
-            '</div>';
-
-        var infowindow = new google.maps.InfoWindow({
-            content: infoView
-        });
-
-        marker.addListener('click', function() {
-            infowindow.open(map, marker);
-        });
-
-        this.taxiMarkers.push(marker);
+        addMarkerTaxi(location,parada) 
     }
+}
+function addMarkerTaxi(location,parada){
+    var marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        icon:imageTaxi
+    });
+
+    var infoView = '<div id="content">' +
+        '<div id="taxiInfo">' +
+        '<h1 id="firstHeading" class="firstHeading">' + parada + '</h1>' +
+        '</div>' +
+        '</div>';
+
+    var infowindow = new google.maps.InfoWindow({
+        content: infoView
+    });
+
+    marker.addListener('click', function() {
+        infowindow.open(map, marker);
+    });
+
+    this.taxiMarkers.push(marker);
 }
 
 function readPointsBares(json) {
