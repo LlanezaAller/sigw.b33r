@@ -8,7 +8,8 @@ namespace B33rServices.Model
     {
         public Pub()
         {
-            votes = new List<Vote>();
+            if (votes == null)
+                votes = new List<Vote>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -17,7 +18,7 @@ namespace B33rServices.Model
         private string name { get; set; }
         private Location location { get; set; }
         private string imageURL { get; set; }
-        private IEnumerable<Vote> votes { get; set; }
+        private List<Vote> votes { get; set; }
 
         public Guid ID
         {
@@ -43,7 +44,7 @@ namespace B33rServices.Model
             set => this.imageURL = value;
         }
 
-        public IEnumerable<Vote> Votes
+        public List<Vote> Votes
         {
             get => votes;
             set => this.votes = value;

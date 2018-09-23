@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace B33rServices.Model
 {
@@ -8,26 +9,28 @@ namespace B33rServices.Model
         {
         }
 
-        private Guid id { get; set; }
+        //private Guid id { get; set; }
         private string recordId { get; set; }
-        private Fields fields { get; set; }
 
-        public Guid ID
-        {
-            get => id;
-            set => this.id = value;
-        }
+        private TaxiLocation taxiLocation { get; set; }
 
+        //public Guid ID
+        //{
+        //    get => id;
+        //    set => this.id = value;
+        //}
+
+        [Key]
         public string RecordID
         {
             get => recordId;
             set => this.recordId = value;
         }
 
-        public Fields Fields
+        public TaxiLocation TaxiLocation
         {
-            get => fields;
-            set => this.fields = value;
+            get => taxiLocation;
+            set => this.taxiLocation = value;
         }
     }
 }
