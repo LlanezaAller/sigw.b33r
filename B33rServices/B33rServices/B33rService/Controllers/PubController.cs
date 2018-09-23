@@ -22,6 +22,9 @@ namespace B33rService.Controllers
             {
                 var pubs = db.Pubs.ToList();
 
+                //Reenganchamos las entidades detached
+                pubs.ForEach(x => x.Votes.Any());
+
                 return pubs;
             }
         }
@@ -36,7 +39,7 @@ namespace B33rService.Controllers
                     var pub = db.Pubs.Find(id);
                     if (pub != null)
                     {
-                        pub.Votes.Add(vote);
+                        pub.NewVote(vote);
                         db.Pubs.AddOrUpdate(pub);
 
                         //db.Pubs.Attach(pub);

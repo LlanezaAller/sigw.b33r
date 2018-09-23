@@ -21,7 +21,8 @@ namespace B33rService
                     ID = Guid.NewGuid(),
                     ImageURL = "",
                     Location = new Location(){Latitud = 1.00, Longitud = 2.00},
-                    Name = "TestPub"
+                    Name = "TestPub",
+                    Votes = new List<Vote>(){ new Vote(){Id = Guid.NewGuid(), Msg = "testMSG", Value = 4}}
                 }
             };
 

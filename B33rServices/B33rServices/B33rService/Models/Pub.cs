@@ -18,7 +18,7 @@ namespace B33rServices.Model
         private string name { get; set; }
         private Location location { get; set; }
         private string imageURL { get; set; }
-        private List<Vote> votes { get; set; }
+        private ICollection<Vote> votes { get; set; }
 
         public Guid ID
         {
@@ -44,10 +44,21 @@ namespace B33rServices.Model
             set => this.imageURL = value;
         }
 
-        public List<Vote> Votes
+        public virtual ICollection<Vote> Votes
         {
-            get => votes;
+            get
+            {
+                if (votes == null)
+                    votes = new List<Vote>();
+                return votes;
+            }
             set => this.votes = value;
+        }
+
+        public void NewVote(Vote vote)
+        {
+            if (this.votes?.Contains(vote) == false)
+                this.votes.Add(vote);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace B33rService
 {
     public class DatabaseContext : DbContext
     {
-        public DatabaseContext() : base("DatabaseContext")
+        public DatabaseContext() : base("name=DatabaseContext")
         {
         }
 
