@@ -72,8 +72,8 @@ var imageTaxi;
 function readTaxiPoints() {//add parameter taxis in production
 
     cleanMap();
-    //var jsonParse = JSON.parse(jsonTaxis);
-    var jsonParse=jsonTaxis;
+    var jsonParse = JSON.parse(jsonTaxis);
+    //var jsonParse=jsonTaxis;
     var taxiObjects = jsonParse["taxis"];
     for (let index in taxiObjects) {
         var taxi = taxiObjects[index];
@@ -111,7 +111,7 @@ function addMarkerTaxi(location,parada){
 
 function readPointsBares(json) {
     cleanMap();
-    var jsonObj=json;
+    var jsonObj=JSON.parse(json);
     var baresOrdenados=[];
     var mediaTotal=0;
     var cont=0;
@@ -211,10 +211,10 @@ function enviarValoracion() {
     jsonString = JSON.stringify(item);
 
     $.ajax({
-        url: '/api/pub/' + guid,
+        url: 'http://156.35.98.50:50050/api/Pub/' + guid,
         data: jsonString,
         type: 'POST',
-        dataType: 'json',
+        dataType: 'application/json',
         success: function(json) {
             alert("votado")
         },
@@ -253,9 +253,9 @@ function cleanMap() {
 
 function getTaxiPoints() {
     $.ajax({
-        url: '/api/taxi/',
+        url: 'http://156.35.98.50:50050/api/Taxi',
         type: 'GET',
-        dataType: 'json',
+        dataType: 'application/json',
         success: function(json) {
             readTaxiPoints(json);
         },
@@ -267,9 +267,9 @@ function getTaxiPoints() {
 
 function getPointsBares() {
     $.ajax({
-        url: '/api/pub/',
+        url: 'http://156.35.98.50:50050/api/Pub',
         type: 'GET',
-        dataType: 'json',
+        dataType: 'application/json',        
         success: function(json) {
             readPointsBares(json);
         },
@@ -283,20 +283,16 @@ $(document).ready(function() {
     $('#slider').slider();
     $('#slider').slider().on('change', function(event) {
         valueSlider = $('#slider').slider('getValue');
-        readPointsBares(points);
+        getPointsBares();
         
     });
-    readPointsBares(points);
+    //readPointsBares(points);
 
-    //getPointsBares();
+    getPointsBares();
     //$("#taxi").onclick(getTaxiPoints());
 });
 
 var valueSlider=1;
-
-
-
-
 
 var points={
     "bares":[{
