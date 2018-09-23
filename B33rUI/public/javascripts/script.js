@@ -89,11 +89,37 @@ function readTaxiPoints(json) {
 }
 
 function readPointsBares(json) {
+    cleanBarMarkers();
     var jsonObj=json;
+    var baresOrdenados=[];
+    var mediaTotal=0;
+    var cont=0;
     $.each(jsonObj.bares, function(i, bar) {
+        var media=0;
+        $.each(bar.votes, function(i, voto) {
+            voto.value = voto.value *2;
+            media=media+voto.value;
+        });
+        media=media/bar.votes.length;
+        mediaTotal=mediaTotal+media;
+        baresOrdenados.push(bar);
+        cont=cont+1;
+    });
+    mediaTotal=mediaTotal/cont;
+    $.each(baresOrdenados, function(i, bar) {
         var lat=bar.location.latitude;
         var lon=bar.location.longitude;
-        addMarkerBar(new google.maps.LatLng(lat,lon),bar.name,bar.imageUrl,bar.guid);
+        var media=0;
+        $.each(bar.votes, function(i, voto) {
+            media=media+voto.value;
+        });
+        media=media/bar.votes.length;
+        if(media < mediaTotal && valueSlider > 1)
+            addMarkerBar(new google.maps.LatLng(lat,lon),bar.name,bar.imageUrl,bar.guid);
+        else if(media > mediaTotal && valueSlider < 1)
+            addMarkerBar(new google.maps.LatLng(lat,lon),bar.name,bar.imageUrl,bar.guid);
+        else if(valueSlider === 1)
+            addMarkerBar(new google.maps.LatLng(lat,lon),bar.name,bar.imageUrl,bar.guid);
     });
 }
 
@@ -231,40 +257,51 @@ function getPointsBares(){
         }
     });
 }
-
+var slider;
 $(document).ready(function() {
     $('#slider').slider();
+    $('#slider').slider().on('change', function(event) {
+        valueSlider = $('#slider').slider('getValue');
+        readPointsBares(points);
+        
+    });
     readPointsBares(points);
 
     //getPointsBares();
     //$("#taxi").onclick(getTaxiPoints());
 });
 
+var valueSlider=1;
 
 
-var points={"bares":[{
-	"guid":"1",
-	"name":"La casa del cafe",
-	"location":{
-		"latitude":43.5392814,
-		"longitude":-5.6675749
-	},
-	"imageUrl":"https://lh5.googleusercontent.com/p/AF1QipNqnuN4cLpu_eSgTP-vQCm_eWkBcAu2oMreNV6y=w408-h272-k-no",
-	"votes":[{
-		"value":4,
-		"msg":"Mensaje"
-	}]
-},
-{
-	"guid":"2",
-	"name":"Blu café",
-	"location":{
-		"latitude":43.5415915,
-		"longitude":-5.6688648
-	},
-	"imageUrl":"https://lh5.googleusercontent.com/p/AF1QipMNRDDHds7EICM7jx5gcSVoON5QbLr2QMMmguhb=w408-h272-k-no",
-	"votes":[{
-		"value":4,
-		"msg":"Mensaje"
-	}]
-}]}
+
+
+
+var points={
+    "bares":[{
+        "guid":"1",
+        "name":"La casa del cafe",
+        "location":{
+            "latitude":43.5392814,
+            "longitude":-5.6675749
+        },
+        "imageUrl":"https://lh5.googleusercontent.com/p/AF1QipNqnuN4cLpu_eSgTP-vQCm_eWkBcAu2oMreNV6y=w408-h272-k-no",
+        "votes":[{
+            "value":2,
+            "msg":"Mensaje"
+        }]
+    },
+    {
+        "guid":"2",
+        "name":"Blu café",
+        "location":{
+            "latitude":43.5415915,
+            "longitude":-5.6688648
+        },
+        "imageUrl":"https://lh5.googleusercontent.com/p/AF1QipMNRDDHds7EICM7jx5gcSVoON5QbLr2QMMmguhb=w408-h272-k-no",
+        "votes":[{
+            "value":4,
+            "msg":"Mensaje"
+        }]
+    }]
+}
